@@ -1,0 +1,79 @@
+
+.custom-button-black {
+  text-transform: none !important;
+  color: white !important;
+  background-color: black !important;
+  font-family: "Open Sans", sans-serif !important;
+  box-shadow: 0px 4px 4px rgba(148, 148, 148, 0.25);
+}
+.custom-button-black:hover {
+  text-transform: none !important;
+  color: black !important;
+  background-color: #dbff76 !important;
+  border: 1px solid black !important;
+  font-family: "Open Sans", sans-serif !important;
+}
+.custom-button-none {
+  text-transform: none !important;
+  color: black !important;
+  background-color: transparent !important;
+  font-family: "Open Sans", sans-serif !important;
+}
+.custom-button-none:hover {
+  text-transform: none !important;
+  color: white !important;
+  background-color: black !important;
+  font-family: "Open Sans", sans-serif !important;
+  box-shadow: 0px 4px 4px rgba(148, 148, 148, 0.25);
+}
+.custom-button-neon {
+  text-transform: none !important;
+  color: black !important;
+  background-color: #dbff76 !important;
+  border: 1px solid black !important;
+  font-family: "Open Sans", sans-serif !important;
+  box-shadow: 0px 4px 4px rgba(148, 148, 148, 0.25);
+}
+
+.custom-button-green {
+  text-transform: none !important;
+  color: black !important;
+  font-family: "Open Sans", sans-serif !important;
+  background-color: #59c3c3 !important;
+  border: 1px solid black !important;
+  box-shadow: 0px 4px 4px rgba(148, 148, 148, 0.25);
+}
+.custom-button-green:hover {
+  text-transform: none !important;
+  color: white !important;
+  background-color: black !important;
+}
+.custom-button-neon:hover {
+  text-transform: none !important;
+  color: white !important;
+  background-color: black !important;
+}
+
+.nav {
+  width: 100%;
+  display: inline-block;
+}
+
+.nav-button {
+  float: right;
+  margin-right: 30px;
+  margin-top: 40px;
+}
+.nav-header {
+  font-size: 30px;
+  font-family: "Montserrat", sans-serif;
+  display: inline;
+  margin: 25px;
+  margin-right: 30px;
+  margin-top: 40px;
+  float: left;
+}
+.account-icon {
+  color: black !important;
+}
+
