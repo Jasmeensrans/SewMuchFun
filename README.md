@@ -11,7 +11,7 @@ In order to build the front end, follow these steps.
 
 1. Navigate to the front-end folder ```cd front-end```
 2. Make sure you have Node Js installed on your computer
-4. Run npm install to install all dependencies
+4. Run ```npm install``` to install all dependencies
 3. Run the command ```npm start``` 
 This will run the application in development  mode on http://localhost:3000
 
