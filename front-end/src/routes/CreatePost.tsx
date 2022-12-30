@@ -1,27 +1,24 @@
 import { NavBar } from "../components/common/NavBar";
 import { PostForm } from "../components/post/PostForm";
+import { User } from "../models/user";
 import { useGetUserQuery } from "../queries/useGetUserQuery";
+import "./routes.css";
 
 export function CreatePost() {
-  const userData = useGetUserQuery()
-  const username = ""
+  const userData = useGetUserQuery();
 
   return (
     <>
-    <div style={{ height: "100vh" }}>
-    <NavBar isLoggedIn={username !== undefined}></NavBar>
+      <div className="page-container blue-pink-white">
+        <NavBar
+          isLoggedIn={true}
+          username={userData.data ? userData.data?.username : ""}
+        ></NavBar>
 
-      <div
-        style={{
-          position: "absolute",
-          left: "50%",
-          top: "50%",
-          transform: "translate(-50%, -50%)",
-        }}
-      >
-        <PostForm userInfo={userData.data ? userData.data : {}}/>
+        <div className="centered-form">
+          <PostForm userInfo={userData.data ? userData.data : {} as User} />
+        </div>
       </div>
-    </div>
     </>
   );
 }

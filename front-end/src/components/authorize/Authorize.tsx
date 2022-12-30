@@ -1,18 +1,19 @@
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import "./authorize.css";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "react-query";
 import agent from "../../api/agent";
-import { UserFormValues } from "../../models/user";
-import { useStore } from "../../App";
+import { UserAuthInfo, UserFormValues } from "../../models/user";
 
 export default function Authorize(props: { isLogin: boolean }) {
   const [isLogin, setLogIn] = useState(props.isLogin);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [retypedPassword, setRetypedPassword] = useState("");
   const [errorText, setErrorText] = useState("");
+  const [loading, setLoading] = useState(false);
 
   let buttonText = isLogin ? "Login" : "Signup";
   let linkText = isLogin
@@ -21,48 +22,50 @@ export default function Authorize(props: { isLogin: boolean }) {
 
   const navigate = useNavigate();
 
-  const {addUsername, addToken} = useStore()
-
-  const loginMutatation = useMutation((user: UserFormValues):any =>
-    agent.Account.login(user),
+  const loginMutation = useMutation(
+    (user: UserFormValues) => {
+      return agent.Account.login(user);
+    },
     {
       onError: () => setErrorText("Invalid email or password"),
-      onSuccess: (data: any) => {
-        addUsername(data.username);
-        addToken(data.token)
+      onSuccess: async (data: UserAuthInfo) => {
         window.localStorage.setItem("jwt", data.token);
-        navigate('/create')
-      }
+        navigate("/home");
+      },
     }
   );
   const signupMutation = useMutation(
-    (user: UserFormValues):any => agent.Account.register(user),
+    (user: UserFormValues) => agent.Account.register(user),
     {
-      onError: (error: any) => setErrorText(error.response.data),
-      onSuccess: (data: any) => {
-        addUsername(data.username);
-        addToken(data.token)
-        window.localStorage.setItem("jwt", data.token);
-        navigate('/create')
+      onError: (error: {response: {data: string}}) => {
+        setErrorText(error.response.data);
       },
-      mutationKey: 'hello'
+      onSuccess: (data: UserAuthInfo) => {
+        window.localStorage.setItem("jwt", data.token);
+        navigate("/discover");
+      },
     }
   );
 
   // password must contain uppercase, lowercase, must be 8+ and a alphanumeric charactor
   const onClick = async () => {
+    setLoading(true);
     if (isLogin) {
       if (email !== "" && password !== "") {
-        await loginMutatation.mutateAsync({
+        loginMutation.mutate({
           email: email,
           password: password,
         });
-
       } else {
         setErrorText("you are missing some fields");
       }
     } else {
-      if (email !== "" && password !== "" && username !== "") {
+      if (
+        email !== "" &&
+        password !== "" &&
+        username !== "" &&
+        password === retypedPassword
+      ) {
         // check password complexity
         const regex = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
         if (regex.test(password)) {
@@ -71,23 +74,25 @@ export default function Authorize(props: { isLogin: boolean }) {
             username: username,
             password: password,
           });
-
         } else {
           setErrorText(
             "password must be 8+ characters, contain a non-alphanumeric character, an uppercase letter and a number"
           );
         }
+      } else if (retypedPassword !== password) {
+        setErrorText("Passwords must match!");
       } else {
         setErrorText("you are missing some fields");
       }
     }
+    setLoading(false);
   };
   useEffect(() => {
     setErrorText("");
   }, [isLogin]);
 
   return (
-    <div className="login-modal">
+    <div className={isLogin ?"login-modal": "signup-modal"}>
       <p className="login-title">Welcome to Sew Much Fun</p>
       <div className="login-input-div">
         <p className="login-text">Email</p>
@@ -118,13 +123,31 @@ export default function Authorize(props: { isLogin: boolean }) {
           className="login-input"
           name="username"
         ></input>
-        <Button
-          className="login-button"
-          style={{ paddingLeft: "25px", paddingRight: "25px" }}
-          onClick={onClick}
-        >
-          {buttonText}
-        </Button>
+        {!isLogin && (
+          <>
+            <p className="login-text">Retype Password</p>
+            <input
+              type="password"
+              value={retypedPassword}
+              onChange={(e) => setRetypedPassword(e.target.value)}
+              className="login-input"
+              name="username"
+            ></input>
+          </>
+        )}
+        {loading ? (
+          <>
+            <CircularProgress className="login-loader"></CircularProgress>
+          </>
+        ) : (
+          <Button
+            className="login-button"
+            onClick={onClick}
+          >
+            {buttonText}
+          </Button>
+        )}
+
         <Button
           className="login-link"
           onClick={() => setLogIn((prev) => !prev)}
@@ -132,18 +155,10 @@ export default function Authorize(props: { isLogin: boolean }) {
         >
           {linkText}
         </Button>
-        <p
-          style={{
-            color: "red",
-            fontFamily: "Open Sans, sans-serif",
-            textAlign: "center",
-            fontSize: "12px",
-            fontWeight: "300",
-          }}
-        >
+        <p className="login-error-text">
           {errorText}
         </p>
       </div>
     </div>
   );
-};
+}

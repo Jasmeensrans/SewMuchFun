@@ -8,7 +8,7 @@ import { Post } from "../models/post";
  * @param token 
  * @returns posts on users feed
  */
-export const useGetUserFeedQuery = (username: string, token: string): UseQueryResult<Partial<Post>[]> => {
-    const response = useQuery('getUserFeed', ()=> agent.Account.getUserFeed(token, username), {enabled: username !== undefined});
-    return response as any;
+export const useGetUserFeedQuery = (username: any, token: string): UseQueryResult<Partial<Post>[]> => {
+    const response = useQuery('getUserFeed', ()=> agent.UserInfo.getUserFeed({username: username}, token), {enabled: !!username});
+    return response;
 }

@@ -1,22 +1,23 @@
 import "./post.css";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { Button, IconButton } from "@mui/material";
+import { Button, CircularProgress, IconButton } from "@mui/material";
 import { useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useMutation } from "react-query";
 import agent from "../../api/agent";
 import { Post } from "../../models/post";
 import { useNavigate } from "react-router-dom";
-import { useGetUserQuery } from "../../queries/useGetUserQuery";
 import { User } from "../../models/user";
 
-export function PostForm(props: {userInfo: User}) {
+export function PostForm(props: { userInfo: User }) {
   const [selectedFile, setSelectedFile] = useState<MediaSource | Blob>();
   const [isFilePicked, setIsFilePicked] = useState(false);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [isError, setError] = useState(false);
+  const [isLoading, setLoading] = useState(false);
+  const [errorText, setErrorText] = useState("")
 
   const navigate = useNavigate();
 
@@ -24,10 +25,13 @@ export function PostForm(props: {userInfo: User}) {
   const token = props.userInfo.token;
   const email = props.userInfo.email;
 
-  const photoMutation = useMutation((photo: FormData):any =>
+  const photoMutation = useMutation<unknown, unknown, FormData, unknown>((photo: FormData) =>
     agent.Photo.upload(photo, token)
   );
-  const postMutation = useMutation((post: Post):any => agent.Post.create(post, token), {onSuccess: () => navigate('/home')});
+  const postMutation = useMutation(
+    (post: Partial<Post>) => agent.Post.create(post, token),
+    { onSuccess: () => navigate(`/profile/${username}`) }
+  );
 
   const handleUpload = (event: any): void => {
     setSelectedFile(event.target.files[0]);
@@ -40,9 +44,26 @@ export function PostForm(props: {userInfo: User}) {
   };
 
   const handleSubmit = async () => {
-    if (!title || !description || title === "" || description === "" || !isFilePicked) {
+    setLoading(true);
+    if (
+      !title ||
+      !description ||
+      title === "" ||
+      description === "" ||
+      !isFilePicked
+    ) {
       setError(true);
+      setErrorText("You're missing some stuff !")
+      setLoading(false)
       return;
+    } else if(description.length > 250) {
+      setError(true);
+      setErrorText("You're description must be less than 250 characters")
+      setLoading(false)
+    } else if(title.length >35) {
+      setError(true);
+      setErrorText("You're title must be less than 35 characters")
+      setLoading(false)
     }
     const photoData = new FormData();
     if (selectedFile) photoData.append("file", selectedFile as Blob);
@@ -56,12 +77,11 @@ export function PostForm(props: {userInfo: User}) {
       photoId: data.id,
       photoUrl: data.url,
       author: username,
-      likes: 0,
-      email: email
-    } as any;
-    // @ts-ignore: Unreachable code error
+      email: email,
+    };
     await postMutation.mutateAsync(post);
-    if (postMutation.isSuccess) navigate("/login");
+    if (postMutation.isSuccess) navigate("/home");
+    setLoading(false);
   };
 
   return (
@@ -82,70 +102,54 @@ export function PostForm(props: {userInfo: User}) {
                 className="post-image"
               ></img>
             ) : (
-              <div
-                style={{
-                  textAlign: "center",
-                  position: "absolute",
-                  top: "130px",
-                  left: "150px",
-                }}
-              >
+              <div className="uploader">
                 <CloudUploadIcon />
-                <p
-                  style={{
-                    fontFamily: "Work Sans, sans-serif",
-                    textAlign: "center",
-                  }}
-                >
-                  Click to Upload
-                </p>
+                <p className="center-p">Click to Upload</p>
               </div>
             )}
           </div>
           {isFilePicked && (
-            <div style={{ position: "absolute", top: "400px", left: "175px" }}>
+            <div className="delete-div">
               <IconButton onClick={deleteFile}>
                 <DeleteIcon />
               </IconButton>
             </div>
           )}
         </div>
-        <div style={{ marginTop: "50px" }}>
+        <div className="post-form-content-div">
           <p className="form-title">Add your title</p>
           <input
             type="text"
             className="upload-input"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            style={{
-              height: "40px",
-              width: "500px",
-              fontSize: "20px",
-            }}
           ></input>
-          <div style={{ marginTop: "30px" }}>
+          <div className="description-div">
             <p className="form-title">Add your description</p>
             <textarea
-              className="upload-input"
+              className="upload-input-area"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              style={{
-                height: "150px",
-                width: "500px",
-                fontSize: "18px",
-                resize: "none",
-              }}
             ></textarea>
-            <Button
-              component="button"
-              className="post-button"
-              onClick={handleSubmit}
-            >
-              Post
-            </Button>
+            {isLoading ? (
+              <div className="post-loader-container">
+                <CircularProgress
+                  className="post-loader"
+                  color="inherit"
+                ></CircularProgress>
+              </div>
+            ) : (
+              <Button
+                component="button"
+                className="post-button"
+                onClick={handleSubmit}
+              >
+                Post
+              </Button>
+            )}
           </div>
         </div>
-        {isError && <p className="error-message">you're missing some stuff!</p>}
+        {isError && <p className="error-message">{errorText}</p>}
       </div>
     </>
   );

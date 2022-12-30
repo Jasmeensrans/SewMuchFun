@@ -33,12 +33,12 @@ namespace API.Services
                 PhotoId = item.PhotoId,
                 PhotoUrl = item.PhotoUrl,
                 Poster = user,
-                likes = item.likes,
                 UserId = user.Id,
             };
-            user.Posts.Add(post);
+            user.Posts.Add(post); // this is not working for some reason?posts exist in post table but not in user.posts
             _context.Users.Attach(user);
             await _userManager.UpdateAsync(user);
+
              _context.Posts.Attach(post);
              await _context.SaveChangesAsync();
 

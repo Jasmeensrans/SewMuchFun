@@ -18,9 +18,8 @@ namespace API.Models
            
             base.OnModelCreating(builder);
             builder.Entity<Post>().HasKey(k => k.Id);
-            builder.Entity<Post>().HasOne<User>().WithMany().HasForeignKey(u => u.UserId);//.OnDelete(DeleteBehavior.Restrict);
             builder.Entity<Post>().HasOne(u=>u.Poster).WithMany(u =>u.Posts).HasForeignKey(u => u.UserId).HasPrincipalKey(u=> u.Id);
-            builder.Entity<User>().HasMany(e => e.Posts).WithOne(e => e.Poster);//.OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<User>().HasMany(e => e.Posts).WithOne(e => e.Poster);
             builder.Entity<Follow>()                                           
             .HasKey(k => new { k.FollowerId, k.FolloweeId });
 
@@ -28,16 +27,16 @@ namespace API.Models
             .HasOne(u => u.Followee)
             .WithMany( u => u.Follower)
             .HasForeignKey(u => u.FollowerId);
-            //.OnDelete(DeleteBehavior.Restrict);
+    
 
             builder.Entity<Follow>()                                            
             .HasOne(u => u.Follower)
             .WithMany( u => u.Followee)
             .HasForeignKey(u => u.FolloweeId);
-            //.OnDelete(DeleteBehavior.Restrict);
+            
 
-            builder.Entity<User>().HasMany(e => e.Followee).WithOne(e => e.Follower);//.OnDelete(DeleteBehavior.Cascade);
-            builder.Entity<User>().HasMany(e => e.Follower).WithOne(e=> e.Followee);//.OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<User>().HasMany(e => e.Followee).WithOne(e => e.Follower);
+            builder.Entity<User>().HasMany(e => e.Follower).WithOne(e=> e.Followee);
         }
 
         public DbSet<Post> Posts { get; set; }

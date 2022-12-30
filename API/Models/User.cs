@@ -15,6 +15,7 @@ namespace API.Models
         public ICollection<Follow> Follower {get; set;} = new List<Follow>();
 
         public ICollection<Follow> Followee {get; set;} = new List<Follow>();
+        public string Image { get; set; }
         
 
     }

@@ -12,7 +12,6 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [AllowAnonymous]
     public class PostController : ControllerBase
     {
         private readonly IPostService _postService;

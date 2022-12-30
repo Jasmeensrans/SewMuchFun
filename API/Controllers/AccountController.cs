@@ -80,85 +80,31 @@ namespace API.Controllers
             return CreateUserObject(user);
         }
 
-        [HttpPost("userInfo")]
-        public async Task<ActionResult<UserInfo>> GetUserInfo([FromBody] string email)
+        [HttpPut("{username}")]
+        public async Task<ActionResult> PutUser(string username, [FromBody] ChangePasswordDto changePasswordDto)
         {
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null) return NotFound();
-            var followerCount = _context.Follows.Where(follow => follow.Follower == user).ToList(); // how many people they follow
-            var followeeCount = _context.Follows.Where(follow => follow.Followee == user).ToList(); // how many people follow them
-            var info = new UserInfo {
-                Username = user.DisplayName,
-                Bio = user.Bio,
-                Posts = user.Posts,
-                Followers = followeeCount.Count,
-                Following = followerCount.Count,
-            };
-            return info;
-        }
 
-        [HttpPost("follow")]
-        public async Task<ActionResult<User>> FollowUser([FromBody] string follower, string followee) 
-        {
-            // followee is the person you want to follow, follower is the person who is following
-            var followeeUser = _userManager.Users.Where(user => user.DisplayName == followee).ToList()[0];
-            var followerUser = _userManager.Users.Where(user => user.DisplayName == follower).ToList()[0];
-            var follow = new Follow 
+            if(username != changePasswordDto.Username)
             {
-                Followee = followeeUser,
-                Follower = followerUser,
-                FolloweeId = followeeUser.Id,
-                FollowerId = followerUser.Id
-            };
-            followerUser.Followee.Add(follow);
-            followeeUser.Follower.Add(follow);
-            await _userManager.UpdateAsync(followeeUser);
-            await _userManager.UpdateAsync(followerUser);
-            return followeeUser;
+                return BadRequest();
+            }
+            var user = _userManager.Users.Where(user => user.DisplayName == changePasswordDto.Username).ToList()[0];
+            var result = await _userManager.ChangePasswordAsync(user, changePasswordDto.OldPassword, changePasswordDto.NewPassword);
+            if(result.Succeeded) {
+                return NoContent();
+            } else {
+                return BadRequest();
+            }
         }
-
-        [HttpPost("unfollow")]
-        public async Task<ActionResult> UnfollowUser([FromBody] string followee, string follower) 
-        {
-            // followee is the person you want to unfollow, follower is the person who is unfollowing
-            var followeeUser = _userManager.Users.Where(user => user.DisplayName == followee).ToList()[0];
-            var followerUser = _userManager.Users.Where(user => user.DisplayName == follower).ToList()[0];
-            var follow = _context.Follows.Where(follow => follow.FolloweeId == followeeUser.Id && follow.FollowerId == followerUser.Id).ToList()[0];
-
-            followerUser.Followee.Remove(follow);
-            followeeUser.Follower.Remove(follow);
-            await _userManager.UpdateAsync(followeeUser);
-            await _userManager.UpdateAsync(followerUser);
-            _context.Follows.Remove(follow);
-            _context.SaveChanges();
-            return NoContent();
-        }
-
-        [HttpPost("userFeed")]
-        public IEnumerable<Post> getUserFeed(string username)
-        {
-            var user = _userManager.Users.Where(user => user.DisplayName == username).ToList()[0];
-            var allPosts = _context.Posts;
-            var posts = new List<Post>();
-            var followees = _context.Follows.Where(follow => follow.Follower == user);
-            followees.ToList().ForEach(follow => {
-                allPosts.ToList().ForEach(post => {
-                    if(post.Poster == follow.Followee) {
-                        posts.Add(post);
-                    }
-                });
-            });
-            return posts;
-        }
-
         private UserDto CreateUserObject(User user)
         {
             return new UserDto
             {
                 Username = user.DisplayName,
-                Image = null,
+                Image = user.Image,
                 Token = _tokenService.CreateToken(user),
                 Email = user.Email,
+                Bio = user.Bio,
             };
         }
     }

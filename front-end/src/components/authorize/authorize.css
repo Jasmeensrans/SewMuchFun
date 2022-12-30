@@ -1,28 +1,40 @@
 .login-modal {
     border: 1px solid black;
     border-radius: 25px;
-    height: 600px;
-    width: 500px;
+    height: 300px;
+    width: 340px;
     background-color: white;
+    margin: 0 auto;
+}
+.signup-modal {
+    border: 1px solid black;
+    border-radius: 25px;
+    height: 400px;
+    width: 340px;
+    background-color: white;
+    margin: 0 auto;
 }
 .login-title {
-    font-family: "Montserrat", sans-serif;
-    font-size: 25px;
+    font-family: 'Questrial', sans-serif;
+    font-size: 20px;
     text-align: center;
-    margin-top: 45px;
+    margin-top: 35px;
 }
 .login-text {
-    font-family: "Montserrat", sans-serif;
-    margin-bottom:5px;
+    font-family: 'Questrial', sans-serif;
+    font-size: 14px;
+    margin: 0px;
+    margin-top: 14px;
 }
 .login-input {
     border: solid black 1px;
     border-radius: 5px;
     box-shadow: 0px 4px 4px rgba(148, 148, 148, 0.25);
     margin: 0px;
-    width: 300px;
-    font-family: "Open Sans", sans-serif !important;
-    height: 30px;
+    width: 250px;
+    font-family:'Questrial', sans-serif !important;
+    height: 23px;
+    font-size: 13px;
 }
 .login-input:focus-visible {
     border: 1px solid black;
@@ -30,29 +42,45 @@
 }
 .login-input-div {
     margin: auto;
-    width: 60%;
-    padding: 10px;
+    position: relative;
+    width: 75%;
+}
+.login-loader {
+    color: #59c3c3 !important;
+    margin-top: 30px !important;
+    margin-left: 120px;
+
 }
 .login-button {
     text-transform: none !important;
     color: black !important;
-    font-family: "Open Sans", sans-serif !important;
-    background-color: #59c3c3 !important;
+    font-family: 'Questrial', sans-serif !important;
+    background-color: #dbff76 !important;
     border: 1px solid black !important;
     box-shadow: 0px 4px 4px rgba(148, 148, 148, 0.25);
-    width: 304px;
-    margin-top: 30px !important;
+    width: 256px;
+    padding-left: 25px;
+    padding-right: 25px;
+    margin-top: 10px !important;
+  }
+  .login-error-text {
+    color: red;
+    font-family: 'Questrial', sans-serif;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 300
   }
   .login-button:hover {
     text-transform: none !important;
     color: white !important;
-    background-color: black !important;
+    background-color: rgb(33, 33, 33) !important;
   }
   .login-link {
     text-transform: none !important;
     color: black !important;
-    font-family: "Open Sans", sans-serif !important;
+    font-size: 12px !important;
+    font-family: 'Questrial', sans-serif !important;
     text-decoration: none;
-    width: 304px;
-    color: rgb(87, 87, 87) !important;
+    width: 254px;
+    color: rgb(89, 89, 89) !important;
   }

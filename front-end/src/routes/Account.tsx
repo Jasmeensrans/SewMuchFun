@@ -1,16 +1,15 @@
 import { NavBar } from "../components/common/NavBar";
 import { Profile } from "../components/user/Profile";
-import { useGetUserInfoQuery } from "../queries/useGetUserInfoQuery";
 import { useGetUserQuery } from "../queries/useGetUserQuery";
 
 export const Account = () => {
   const user = useGetUserQuery();
-  const userInfo = useGetUserInfoQuery(user.data?.email);
 
+  if(!user.data) return <></>
   return (
-    <>
-      <NavBar isLoggedIn={true} />
-      <Profile isLoggedInUser={true}/>
-    </>
+    <div className="custom-grad page-container" style={{backgroundImage: "url(/grad.png)"}}>
+      <NavBar isLoggedIn={true} username={user.data?.username} />
+      <Profile token={user.data?.token} username={user.data?.username}/>
+    </div>
   );
 };

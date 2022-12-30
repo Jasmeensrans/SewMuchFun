@@ -13,5 +13,7 @@ namespace API.Models
         public ICollection<Post> Posts { get; set; }
         public int Followers { get; set; }
         public int Following { get; set; }
+        public bool Followed { get; set; }
+        public string Image { get; set; }
     }
 }

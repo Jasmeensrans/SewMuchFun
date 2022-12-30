@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
-import { useStore } from "../App";
 import { Post as PostModel } from "../models/post";
-import { User, UserFormValues } from "../models/user";
+import { UserInfo as UserInfoDto } from "../models/user";
+import { FollowDto, PasswordDto, User, UserAuthInfo, UserFormValues } from "../models/user";
 
 axios.defaults.baseURL = "http://localhost:5000/api";
 
@@ -14,11 +14,11 @@ const requests = {
       .then(responseBody),
   post: <T>(url: string, body: {}, token?: string) => {
     if (token) {
-      axios
+      return axios
         .post<T>(url, body, { headers: { Authorization: `Bearer ${token}` } })
         .then(responseBody);
     } else {
-      axios.post<T>(url, body).then(responseBody);
+      return axios.post<T>(url, body).then(responseBody);
     }
   },
   put: <T>(url: string, body: {}, token: string) =>
@@ -38,25 +38,33 @@ const Photo = {
 
 const Account = {
   current: (token: string) => requests.get<User>("/account", token),
-  login: (user: UserFormValues) => requests.post<User>("/account/login", user),
-  register: (user: UserFormValues) =>
+  login: (user: UserFormValues): Promise<UserAuthInfo> => requests.post<User>("/account/login", user),
+  register: (user: UserFormValues):Promise<UserAuthInfo> =>
     requests.post<User>("/account/register", user),
-  getUser: (token: string) => requests.get("/Account", token),
-  getUserFeed: (token: string, username: string) =>
-    requests.post(`/Account/userFeed?username=${username}`, {}, token),
-  getUserInfo: (email: string) => requests.post("/Account/userInfo", JSON.stringify({email: "12"})),
+  getUser: (token: string):Promise<User> => requests.get("/Account", token),
+  changePassword: (body: PasswordDto, username: string, token: string) => requests.put(`/Account/${username}`, body, token)
 };
+
+const UserInfo = {
+  getUserInfo: (username: string, token:string):Promise<UserInfoDto> => requests.get(`/UserInfo/${username}`, token),
+  followUser: (body: FollowDto, token: string):Promise<unknown> => requests.post("/UserInfo/follow", body, token),
+  unfollowUser: (body: FollowDto, token: string):Promise<unknown> => requests.post("/UserInfo/unFollow", body, token),
+  getUserFeed: (body: {username: string}, token: string):Promise<PostModel[]> => requests.post("/UserInfo/userFeed", body, token),
+  updateProfilePic: (body: {imageUrl: string, bio: string}, token: string, username: string) => requests.put(`/UserInfo/${username}`, body, token),
+}
 
 const Post = {
   create: (post: Partial<PostModel>, token: string) =>
     requests.post("/Post", post, token),
   delete: (id: string, token: string) => requests.del(`/Post/${id}`, token),
+  get: (token: string) => requests.get('/Post', token) 
 };
 
 const agent = {
   Account,
   Photo,
   Post,
+  UserInfo
 };
 
 export default agent;

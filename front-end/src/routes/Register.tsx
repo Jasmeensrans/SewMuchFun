@@ -3,9 +3,9 @@ import { NavBar } from "../components/common/NavBar";
 
 export const Register = () => {
   return (
-    <div style={{height: '100vh'}}>
+    <div className="page-container blue-pink">
       <NavBar isLoggedIn={false} />
-      <div style={{position: 'absolute', left: '50%', top: '60%', transform: 'translate(-50%, -50%)'}}>
+      <div className="centered-form">
         <Authorize isLogin={false} />
       </div>
     </div>
