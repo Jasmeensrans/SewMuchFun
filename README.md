@@ -10,7 +10,7 @@ The frontend for this application is created using React JS. Some node libraries
 In order to build the front end, follow these steps.
 
 1. Navigate to the front-end folder ```cd front-end```
-2. Make sure you have Node Js installed on your computer
+2. Ensure you have Node Js installed on your computer
 4. Run ```npm install``` to install all dependencies
 3. Run the command ```npm start``` 
 This will run the application in development  mode on http://localhost:3000
@@ -22,5 +22,6 @@ The backend for this application is created using ASP.NET Core 6
 In order the run the backend server, follow these steps
 
 1. Navigate to the API folder ```cd API```
-2. Make sure you have ASP.NET 6 installed on your computer
-3. Run the command ```dotnet watch run```
+2. Ensure you have ASP.NET 6 installed on your computer
+3. Ensure you have all required nuget packages installed, you can find the list of required packages in the API.csproj file.
+4. Run the command ```dotnet watch run```
