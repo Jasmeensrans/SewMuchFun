@@ -22,7 +22,7 @@ export const Discover = () => {
     { enabled: userData.data?.token !== undefined }
   );
   return (
-    <div className="blue-pink-white">
+    <div className="custom-grad page-container" style={{backgroundImage: "url(/grad.png)"}}>
       <NavBar isLoggedIn={true} username={userData.data?.username ?? ""} />
       <div>
         <div className="block">

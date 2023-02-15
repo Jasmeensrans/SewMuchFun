@@ -3,7 +3,7 @@ import { Post as PostModel } from "../models/post";
 import { UserInfo as UserInfoDto } from "../models/user";
 import { FollowDto, PasswordDto, User, UserAuthInfo, UserFormValues } from "../models/user";
 
-axios.defaults.baseURL = "http://localhost:5000/api";
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 const responseBody = <T>(response: AxiosResponse<T>) => response.data;
 

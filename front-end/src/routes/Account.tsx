@@ -10,6 +10,7 @@ export const Account = () => {
     <div className="custom-grad page-container" style={{backgroundImage: "url(/grad.png)"}}>
       <NavBar isLoggedIn={true} username={user.data?.username} />
       <Profile token={user.data?.token} username={user.data?.username}/>
+      <div style={{height: '2000px'}}></div>
     </div>
   );
 };
